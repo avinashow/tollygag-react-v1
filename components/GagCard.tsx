@@ -1,33 +1,44 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React from "react";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardMedia from '@material-ui/core/CardMedia';
-import IconButton from '@material-ui/core/IconButton';
+import Badge from "@material-ui/core/Badge";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
 
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import ThumbDownIcon from '@material-ui/icons/ThumbDown';
-import ReportIcon from '@material-ui/icons/Report'; 
+import CommentIcon from "@material-ui/icons/Comment";
+import ReportIcon from "@material-ui/icons/Report";
+import ThumbUpIcon from "@material-ui/icons/ThumbUp";
+import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 
-import { GetPostTO } from '../api/api.types';
-import CardActionArea  from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import { SocialMediaShare } from './SocialMediaShare';
-import Tooltip from '@material-ui/core/Tooltip';
+import { GetPostTO } from "../api/api.types";
+import { SocialMediaShare } from "./SocialMediaShare";
 
 type GagCardProps = {
   post: GetPostTO;
   handleOnClick?: Function;
-}
+};
+
+const StyledBadge = withStyles(theme => ({
+  badge: {
+    right: -2,
+    top: 6,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: "0 4px"
+  }
+}))(Badge);
 
 export function GagCard(props: GagCardProps) {
   const { post, handleOnClick } = props;
   const classes = useStyles();
 
   return (
-    <Card className={classes.root} >
+    <Card className={classes.root}>
       <CardActionArea onClick={() => handleOnClick(post.id)}>
         <CardContent>
           <Tooltip title={post.title}>
@@ -37,45 +48,56 @@ export function GagCard(props: GagCardProps) {
           </Tooltip>
         </CardContent>
         <CardMedia
-          component='img'
+          component="img"
           image={post.content.url}
           title={post.title}
         />
       </CardActionArea>
       <CardActions disableSpacing>
-        <div className={classes.votes}>
-          <IconButton aria-label="add to favorites">
+        <IconButton aria-label="like">
+          <StyledBadge
+            badgeContent={post.socialStats.upvotes}
+            color="secondary"
+            max={999}
+          >
             <ThumbUpIcon />
-          </IconButton>
-          <Typography variant="caption">
-            {post.socialStats.upvotes}
-          </Typography>
-        </div>
-        <div className={classes.votes}>
-          <IconButton aria-label="remove from favorites">
+          </StyledBadge>
+        </IconButton>
+
+        <IconButton aria-label="dislike">
+          <StyledBadge
+            badgeContent={post.socialStats.downvotes}
+            color="secondary"
+            max={999}
+          >
             <ThumbDownIcon />
+          </StyledBadge>
+        </IconButton>
+
+        <div className={classes.iconBtn}>
+          <IconButton aria-label="cart">
+            <StyledBadge badgeContent={364} max={999} color="secondary">
+              <CommentIcon />
+            </StyledBadge>
           </IconButton>
-          <Typography variant="caption">
-            {post.socialStats.downvotes}
-          </Typography>
-        </div>
+
           <SocialMediaShare />
+
           <IconButton aria-label="report post">
             <ReportIcon />
           </IconButton>
+        </div>
       </CardActions>
     </Card>
   );
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     marginBottom: 20,
-    maxWidth:500
+    maxWidth: 500
   },
-  votes: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
+  iconBtn: {
+    marginLeft: "auto"
   }
 }));
